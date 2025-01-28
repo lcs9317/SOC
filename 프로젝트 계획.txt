@@ -65,11 +65,3 @@ Kibana 대시보드 구성
 6주차: 테스트 및 배포
 전체 시스템 통합 테스트
 최적화 및 문서화
-현재 진행 상태
-완료:
-Docker Compose로 Kafka, Elasticsearch, Kibana 설치 및 기본 설정 완료
-기본적인 Kafka 설정 및 테스트 완료
-다음 단계:
-
-데이터 수집 및 처리 파이프라인 구축
-Kafka와 Elasticsearch 연동하여 로그 저장
