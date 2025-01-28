@@ -1,0 +1,19 @@
+{
+    "mappings": {
+      "properties": {
+        "timestamp": { "type": "date" },
+        "src_ip": { "type": "ip" },
+        "dst_ip": { "type": "ip" },
+        "src_port": { "type": "integer" },
+        "dst_port": { "type": "integer" },
+        "protocol": { "type": "keyword" },
+        "length": { "type": "integer" },
+        "flags": { "type": "keyword" },
+        "packets_per_second": { "type": "float" },
+        "bytes_per_second": { "type": "float" },
+        "attack_score": { "type": "float" },
+        "is_attack": { "type": "boolean" },
+        "attack_type": { "type": "keyword" }
+      }
+    }
+  }

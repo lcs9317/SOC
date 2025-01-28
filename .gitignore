@@ -1,0 +1,10 @@
+# IDE files
+.idea/
+.vscode/
+
+# Logs
+*.log
+
+# Docker volumes
+data/
+
