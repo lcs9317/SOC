@@ -1,4 +1,4 @@
-# Kafka Elasticsearch Setup
+# AI기반 DDoS탐지 SOC
 
 ## 개요
 이 프로젝트는 Kafka와 Elasticsearch를 연동하는 환경을 Docker Compose를 사용하여 구성합니다.
