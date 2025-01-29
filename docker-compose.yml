@@ -44,6 +44,27 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+  
+  # ----------------------------
+  # 2) Zeek (공식 이미지)
+  # ----------------------------
+  zeek:
+    image: zeek/zeek:latest         # 공식 Zeek 이미지
+    container_name: zeek
+    network_mode: host              # 실제 네트워크 트래픽 캡처 위해 호스트 네트워크 사용
+    volumes:
+      - ./zeek/logs:/opt/zeek/logs  # Zeek 로그 확인용
+      - ./zeek/scripts:/opt/zeek/share/zeek/site  # Zeek 스크립트 마운트
+      - ./zeek/zeek.cfg:/opt/zeek/share/zeek/zeek.cfg  # Zeek 설정 파일 마운트
+    privileged: true                # 네트워크 캡처 권한
+    environment:
+      - ZEEK_SCRIPT_PATH=kafka-send.zeek   # 우리가 작성한 스크립트명
+      - KAFKA_BOOTSTRAP=host.docker.internal:9092          # Kafka 브로커 주소
+      - KAFKA_TOPIC=network-traffic
+    command: ["zeek", "-C", "-i", "eth0"]          # 인터페이스 지정
+    depends_on:
+      - kafka
+
 
   # -------------------------------------------------------
   # 2) Logstash (Kafka -> Elasticsearch)
@@ -104,24 +125,24 @@ services:
   # -------------------------------------------------------
   # 4) Network Collector (Scapy -> Kafka)
   # -------------------------------------------------------
-  network-collector:
-    build:
-      context: ./collector
-      dockerfile: Dockerfile
-    container_name: network-collector
-    networks:
-      - kafka_network
-    privileged: true  # scapy sniff 권한
-    depends_on:
-      kafka:
-        condition: service_healthy
-    environment:
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
-    deploy:
-      resources:
-        limits:
-          memory: 512M  # 메모리 제한을 512MB로 설정
-    restart: on-failure:3
+  #network-collector:
+  #  build:
+  #    context: ./collector
+  #    dockerfile: Dockerfile
+  #  container_name: network-collector
+  #  networks:
+  #    - kafka_network
+  #  privileged: true  # scapy sniff 권한
+  #  depends_on:
+  #    kafka:
+  #      condition: service_healthy
+  #  environment:
+  #    - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+  #  deploy:
+  #    resources:
+  #      limits:
+  #        memory: 512M  # 메모리 제한을 512MB로 설정
+  #  restart: on-failure:3
 
   # -------------------------------------------------------
   # 5) AI Model Trainer (일회성 실행)
