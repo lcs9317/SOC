@@ -49,8 +49,7 @@ def main():
 
             data = json.loads(msg.value().decode('utf-8'))
 
-            # Zeek가 보낸 필드들: FlowDuration, TotalFwdPackets, ...
-            # Trainer에서 drop하지 않은 컬럼만 순서 맞춰서 features에 넣는다
+            # features 순서는 KafkaSend.zeek에서 전송한 JSON key 순서와 동일해야 합니다.
             features = [
                 float(data.get("Flow Duration", 0)),
                 float(data.get("Total Fwd Packets", 0)),
@@ -71,12 +70,10 @@ def main():
                 float(data.get("Flow IAT Std", 0)),
                 float(data.get("Flow IAT Max", 0)),
                 float(data.get("Flow IAT Min", 0)),
-                float(data.get("Fwd IAT Total", 0)),
                 float(data.get("Fwd IAT Mean", 0)),
                 float(data.get("Fwd IAT Std", 0)),
                 float(data.get("Fwd IAT Max", 0)),
                 float(data.get("Fwd IAT Min", 0)),
-                float(data.get("Bwd IAT Total", 0)),
                 float(data.get("Bwd IAT Mean", 0)),
                 float(data.get("Bwd IAT Std", 0)),
                 float(data.get("Bwd IAT Max", 0)),
@@ -131,12 +128,9 @@ def main():
             ]
 
             features = [float(x) for x in features]
-
-            # 스케일링
             arr = np.array(features).reshape(1, -1)
             arr_scaled = scaler.transform(arr)
 
-            # 모델 reshape
             if MODEL_TYPE.lower() == "cnn":
                 arr_scaled = arr_scaled.reshape((arr_scaled.shape[0], arr_scaled.shape[1], 1))
             else:
@@ -145,11 +139,10 @@ def main():
             pred = model.predict(arr_scaled)
             is_ddos = int((pred > 0.5).astype(int)[0][0])
 
-            # Elasticsearch 인덱싱
             doc = {
                 "FlowID": data.get("FlowID", ""),
-                "SourceIP": str(data.get("SourceIP", "")),
-                "DestinationIP": str(data.get("DestinationIP", "")),
+                "SourceIP": str(data.get("Source IP", "")),
+                "DestinationIP": str(data.get("Destination IP", "")),
                 "prediction": is_ddos,
                 "timestamp": int(time.time() * 1000)
             }

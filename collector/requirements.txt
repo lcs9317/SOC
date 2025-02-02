@@ -1,4 +1,0 @@
-scapy
-confluent_kafka
-python-json-logger
-python-dotenv
