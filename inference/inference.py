@@ -9,7 +9,7 @@ from elasticsearch import Elasticsearch
 from tensorflow.keras.models import load_model
 import joblib
 
-KAFKA_BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "kafka:9092")
+KAFKA_BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "kafka:29092")
 KAFKA_TOPIC = os.getenv("KAFKA_TOPIC", "network-traffic")
 ES_HOST = os.getenv("ELASTICSEARCH_HOST", "elasticsearch")
 ES_PORT = int(os.getenv("ELASTICSEARCH_PORT", "9200"))
@@ -70,10 +70,12 @@ def main():
                 float(data.get("Flow IAT Std", 0)),
                 float(data.get("Flow IAT Max", 0)),
                 float(data.get("Flow IAT Min", 0)),
+                float(data.get("Fwd IAT Total", 0)),   # 추가: Fwd IAT Total
                 float(data.get("Fwd IAT Mean", 0)),
                 float(data.get("Fwd IAT Std", 0)),
                 float(data.get("Fwd IAT Max", 0)),
                 float(data.get("Fwd IAT Min", 0)),
+                float(data.get("Bwd IAT Total", 0)),   # 추가: Bwd IAT Total
                 float(data.get("Bwd IAT Mean", 0)),
                 float(data.get("Bwd IAT Std", 0)),
                 float(data.get("Bwd IAT Max", 0)),
@@ -103,6 +105,7 @@ def main():
                 float(data.get("Average Packet Size", 0)),
                 float(data.get("Avg Fwd Segment Size", 0)),
                 float(data.get("Avg Bwd Segment Size", 0)),
+                float(data.get("Fwd Header Length2", 0)),  # 추가: 두 번째 Fwd Header Length
                 float(data.get("Fwd Avg Bytes/Bulk", 0)),
                 float(data.get("Fwd Avg Packets/Bulk", 0)),
                 float(data.get("Fwd Avg Bulk Rate", 0)),
@@ -126,6 +129,7 @@ def main():
                 float(data.get("Idle Max", 0)),
                 float(data.get("Idle Min", 0))
             ]
+
 
             features = [float(x) for x in features]
             arr = np.array(features).reshape(1, -1)

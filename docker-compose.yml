@@ -59,7 +59,7 @@ services:
     environment:
       - KAFKA_BOOTSTRAP=127.0.0.1:9092          # Kafka 브로커 주소 (host 네트워크 모드)
       - KAFKA_TOPIC=network-traffic
-    command: ["zeekctl", "deploy"]          # 인터페이스 지정
+              # 인터페이스 지정
     depends_on:
       - kafka
 

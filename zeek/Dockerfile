@@ -65,7 +65,7 @@ RUN apt-get update && apt-get install -y netcat-openbsd
 RUN apt-get update && apt-get install -y net-tools
 # 7. 작업 디렉토리 설정 및 사용자 Zeek 스크립트 복사
 WORKDIR /opt/zeek/share/zeek/site
-COPY scripts/kafka-send.zeek .
+COPY scripts/InferenceKafka.zeek .
 
 COPY zeek.cfg /etc/zeek/zeek.cfg
 COPY scripts/local.zeek .
@@ -73,4 +73,4 @@ COPY scripts/local.zeek .
 ENV ZEEK_LOG_DIR=/opt/zeek/logs
 
 # 8. 컨테이너 시작 시 Zeek 실행 (네트워크 인터페이스는 필요에 따라 변경)
-CMD ["zeekctl", "deploy"]
+CMD zeekctl deploy && tail -f /dev/null

@@ -3,7 +3,6 @@
 module InferenceKafka;
 
 export {
-    # 1) FlowFeatures 레코드 정의 (각 필드마다 &log 속성을 명시)
     type FlowFeatures: record {
         flow_duration            : double &log;
         total_fwd_packets        : double &log;
@@ -24,10 +23,12 @@ export {
         flow_iat_std             : double &log;
         flow_iat_max             : double &log;
         flow_iat_min             : double &log;
+        fwd_iat_total            : double &log;  
         fwd_iat_mean             : double &log;
         fwd_iat_std              : double &log;
         fwd_iat_max              : double &log;
         fwd_iat_min              : double &log;
+        bwd_iat_total            : double &log;  
         bwd_iat_mean             : double &log;
         bwd_iat_std              : double &log;
         bwd_iat_max              : double &log;
@@ -57,6 +58,7 @@ export {
         average_packet_size      : double &log;
         avg_fwd_segment_size     : double &log;
         avg_bwd_segment_size     : double &log;
+        fwd_header_length2       : double &log;
         fwd_avg_bytes_bulk       : double &log;
         fwd_avg_packets_bulk     : double &log;
         fwd_avg_bulk_rate        : double &log;
@@ -84,6 +86,7 @@ export {
         destination_ip           : string &log;
     };
 }
+
 
 # 2) Log::ID에 FLOW_FEATURES 추가
 redef enum Log::ID += { FLOW_FEATURES };
@@ -143,10 +146,12 @@ event Conn::log_conn(rec: Conn::Info) {
         $flow_iat_std             = 0.0,
         $flow_iat_max             = 0.0,
         $flow_iat_min             = 0.0,
+        $fwd_iat_total            = 0.0,
         $fwd_iat_mean             = 0.0,
         $fwd_iat_std              = 0.0,
         $fwd_iat_max              = 0.0,
         $fwd_iat_min              = 0.0,
+        $bwd_iat_total            = 0.0,
         $bwd_iat_mean             = 0.0,
         $bwd_iat_std              = 0.0,
         $bwd_iat_max              = 0.0,
@@ -176,6 +181,7 @@ event Conn::log_conn(rec: Conn::Info) {
         $average_packet_size      = 0.0,
         $avg_fwd_segment_size     = 0.0,
         $avg_bwd_segment_size     = 0.0,
+        $fwd_header_length2       = 0.0,
         $fwd_avg_bytes_bulk       = 0.0,
         $fwd_avg_packets_bulk     = 0.0,
         $fwd_avg_bulk_rate        = 0.0,
@@ -204,3 +210,4 @@ event Conn::log_conn(rec: Conn::Info) {
     ];
     Log::write(FLOW_FEATURES, f);
 }
+
