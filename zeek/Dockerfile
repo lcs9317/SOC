@@ -45,12 +45,7 @@ ENV PATH="$PATH:/opt/zeek/bin"
 # LIBRDKAFKA_ROOT 환경변수를 librdkafka가 설치된 기본 경로로 설정
 ENV LIBRDKAFKA_ROOT=/usr/local
 
-# 6. SeisoLLC/zeek-kafka 플러그인 수동 설치
-#    공식 수동 설치 방법: 
-#      ./configure --with-librdkafka=$LIBRDKAFKA_ROOT
-#      make
-#      make install
-#      ldconfig
+
 RUN git clone https://github.com/SeisoLLC/zeek-kafka.git /opt/zeek-kafka && \
     cd /opt/zeek-kafka && \
     git checkout v1.2.0 && \
