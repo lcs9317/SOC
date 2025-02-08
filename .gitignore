@@ -8,3 +8,5 @@
 # Docker volumes
 data/
 
+/letsencrypt/
+/zeek/logs/

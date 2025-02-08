@@ -14,7 +14,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && rm -rf /var/lib/apt/lists/*
 
 
- RUN apt-get purge -y bro zeek || true
 
 # 2. Zeek 공식 OBS 저장소 추가
 RUN curl -fsSL https://download.opensuse.org/repositories/security:zeek/xUbuntu_22.04/Release.key \
