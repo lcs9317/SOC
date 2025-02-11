@@ -112,6 +112,8 @@ services:
     ports:
       - "5601:5601"
     environment:
+      - SERVER_BASEPATH=/kibana
+      - SERVER_REWRITEBASEPATH=true
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       - NODE_OPTIONS=--max-old-space-size=512  # Node.js 메모리 제한을 512MB로 설정
     networks:
@@ -203,6 +205,50 @@ services:
         limits:
           memory: 512M  # 메모리 제한을 512MB로 설정
 
+
+  db:
+    image: postgres:14-alpine
+    container_name: user_db
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=security_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root -d security_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - kafka_network
+
+  auth:
+    build:
+      context: ./auth
+      dockerfile: Dockerfile
+    container_name: auth_service
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - DB_NAME=security_db
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - kafka_network
+
+
 networks:
   kafka_network:
     driver: bridge
+
+volumes:
+  db_data:
