@@ -93,12 +93,16 @@ services:
       - "9200:9200"
     environment:
       - discovery.type=single-node
-      - xpack.security.enabled=false
+      - xpack.security.enabled=true
+      - ELASTIC_PASSWORD=root
       - ES_JAVA_OPTS=-Xms1g -Xmx1g  # 힙 메모리를 1GB로 제한
     networks:
       - kafka_network
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+      - es_config:/usr/share/elasticsearch/config
     healthcheck:
-      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -q 'status.*green\\|status.*yellow'"]
+      test: ["CMD-SHELL", "curl -s -u elastic:root http://localhost:9200/_cluster/health | grep -q 'status.*green\\|status.*yellow'"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -112,9 +116,8 @@ services:
     ports:
       - "5601:5601"
     environment:
-      - SERVER_BASEPATH=/kibana
-      - SERVER_REWRITEBASEPATH=true
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_SERVICEACCOUNTTOKEN=AAEAAWVsYXN0aWMva2liYW5hL215LXRva2VuOjREU2VjSk1rUXhhNE5uV1FfMjVSRnc
       - NODE_OPTIONS=--max-old-space-size=512  # Node.js 메모리 제한을 512MB로 설정
     networks:
       - kafka_network
@@ -195,7 +198,7 @@ services:
     volumes:
       - ./models:/app/models
     environment:
-      - MODEL_TYPE=cnn
+      - MODEL_TYPE=lstm
       - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
       - KAFKA_TOPIC=network-traffic
       - ELASTICSEARCH_HOST=elasticsearch
@@ -206,49 +209,11 @@ services:
           memory: 512M  # 메모리 제한을 512MB로 설정
 
 
-  db:
-    image: postgres:14-alpine
-    container_name: user_db
-    environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=security_db
-    ports:
-      - "5432:5432"
-    volumes:
-      - db_data:/var/lib/postgresql/data
-      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U root -d security_db"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - kafka_network
-
-  auth:
-    build:
-      context: ./auth
-      dockerfile: Dockerfile
-    container_name: auth_service
-    ports:
-      - "3000:3000"
-    environment:
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_USER=root
-      - DB_PASSWORD=root
-      - DB_NAME=security_db
-    depends_on:
-      db:
-        condition: service_healthy
-    networks:
-      - kafka_network
-
 
 networks:
   kafka_network:
     driver: bridge
 
 volumes:
-  db_data:
+  es_data:
+  es_config:

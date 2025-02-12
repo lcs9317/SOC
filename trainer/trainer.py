@@ -24,18 +24,18 @@ def main():
 
     # 2) Label(타겟) -> 0,1 변환
     #    CSV에 " Label"로 되어 있을 가능성이 큼 (앞에 공백)
-    df[' Label'] = (df[' Label'] != 'BENIGN').astype(int)
+    df['label'] = (df['label'] != 'BENIGN').astype(int)
 
     # 3) 학습에 쓰지 않을 컬럼들(Flow ID, IP, Port, Timestamp 등) drop
     drop_cols = [
-        'Flow ID',' Source IP',' Source Port',' Destination IP',' Destination Port',' Protocol',
-        ' Timestamp'
+        'flow_id','source_ip','source_port','destination_ip','destination_port','protocol',
+        'timestamp'
     ]
     df = df.drop(columns=drop_cols, errors='ignore')
 
     # 4) X, y 분리
-    y = df[' Label'].values
-    X = df.drop(columns=[' Label'], errors='ignore').values
+    y = df['label'].values
+    X = df.drop(columns=['label'], errors='ignore').values
 
     # NaN/inf -> 0
     X = np.nan_to_num(X, nan=0, posinf=0, neginf=0)
