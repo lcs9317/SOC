@@ -74,7 +74,10 @@ services:
       - kafka
       - elasticsearch
     volumes:
-      - ./logstash/pipeline/:/usr/share/logstash/pipeline/
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./logstash/pipeline/:/usr/share/logstash/pipeline/   
+      - ./letsencrypt:/usr/share/logstash/config/certs:ro
+    
     ports:
       - "5044:5044"
     environment:
@@ -94,6 +97,7 @@ services:
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=false
       - ELASTIC_PASSWORD=root
       - ES_JAVA_OPTS=-Xms1g -Xmx1g  # 힙 메모리를 1GB로 제한
     networks:
@@ -101,8 +105,9 @@ services:
     volumes:
       - es_data:/usr/share/elasticsearch/data
       - es_config:/usr/share/elasticsearch/config
+      - ./letsencrypt:/usr/share/elasticsearch/config/certs:ro
     healthcheck:
-      test: ["CMD-SHELL", "curl -s -u elastic:root http://localhost:9200/_cluster/health | grep -q 'status.*green\\|status.*yellow'"]
+      test: ["CMD-SHELL", "curl -u elastic:root http://localhost:9200/_cluster/health | grep -q 'status.*green\\|status.*yellow'"]
       interval: 30s
       timeout: 10s
       retries: 3
