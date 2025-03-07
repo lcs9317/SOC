@@ -19,5 +19,5 @@ jobs:
 
       - name: Build Docker images and run tests
         run: |
-          docker-compose build
-          docker-compose run --rm inference_test pytest --maxfail=1 --disable-warnings -q
+          docker compose build
+          docker compose run --rm inference_test pytest --maxfail=1 --disable-warnings -q
