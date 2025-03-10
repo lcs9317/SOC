@@ -2,7 +2,7 @@ import io
 import pytest
 import pandas as pd
 import numpy as np
-from inference.inference import extract_features
+from inference import extract_features
 
 @pytest.fixture
 def sample_csv_data():
