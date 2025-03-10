@@ -5,11 +5,8 @@ import numpy as np
 import joblib
 from tensorflow.keras.models import load_model
 
-# "inference.py" 안의 함수들 임포트
-#  - extract_features: CSV 딕셔너리에서 피처 배열을 만드는 함수
 from inference import extract_features
 
-# 모델 파일 경로(테스트 환경 맞춰 조정)
 MODEL_PATH = "/app/models/ddos_model.h5"
 SCALER_PATH = "/app/models/scaler.pkl"
 
@@ -24,12 +21,12 @@ def sample_csv_data():
 def test_extract_features_from_csv_and_predict(sample_csv_data):
     # (1) CSV -> DataFrame -> dict
     df = pd.read_csv(io.StringIO(sample_csv_data))
-    row_dict = df.iloc[0].to_dict()  # 첫 행만 테스트
+    row_dict = df.iloc[0].to_dict()  
 
     # (2) 테스트 대상 함수(피처 추출)
     arr = extract_features(row_dict, model_type="lstm")
     assert isinstance(arr, np.ndarray)
-    assert arr.shape[0] == 1  # (1, n_features)
+    assert arr.shape[0] == 1  
 
     # (3) 모델 로드 & 스케일러 로드
     model = load_model(MODEL_PATH)
@@ -46,6 +43,5 @@ def test_extract_features_from_csv_and_predict(sample_csv_data):
     is_ddos = int((pred > 0.5).astype(int)[0][0])
 
     # (7) 예측값 검증
-    # 예: benign이면 0이길 기대한다면:
     assert is_ddos in [0, 1]
     print(f"Predicted is_ddos={is_ddos} for first row")
