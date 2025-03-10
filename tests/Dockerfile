@@ -11,4 +11,4 @@ COPY . .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD ["pytest", "test_inference.py"]
+CMD ["python", "-m", "pytest", "test_inference.py"]
