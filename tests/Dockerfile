@@ -13,6 +13,6 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY test_inference.py .
-
+COPY ../inference/inference.py .
 
 CMD ["python", "-m", "pytest", "test_inference.py"]
