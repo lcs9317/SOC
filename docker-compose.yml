@@ -215,8 +215,8 @@ services:
           memory: 512M  # 메모리 제한을 512MB로 설정
   test_inference:
     build:
-      context: ./tests
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./tests/Dockerfile.test
     container_name: test_inference
     networks:
       - kafka_network
