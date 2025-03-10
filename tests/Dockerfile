@@ -1,4 +1,4 @@
-from python:3.7-slim
+from python:3.9-slim
 
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -7,7 +7,8 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-COPY . /app
+COPY . .
+
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD ["python", "test_inference.py"]
+CMD ["pytest", "test_inference.py"]
