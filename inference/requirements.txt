@@ -3,5 +3,5 @@ elasticsearch
 scikit-learn
 pandas
 joblib
-
+pytest
 

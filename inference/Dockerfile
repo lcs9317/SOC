@@ -12,5 +12,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY inference.py .
+COPY test_inference.py .
+COPY __init__.py .
 
 CMD ["python", "inference.py"]
