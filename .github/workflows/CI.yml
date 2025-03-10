@@ -20,4 +20,4 @@ jobs:
       - name: Build Docker images and run tests
         run: |
           docker compose build
-          docker compose run -it ai-inference python -m pytest /app/test_inference.py 
+          docker compose run ai-inference python -m pytest /app/test_inference.py 
