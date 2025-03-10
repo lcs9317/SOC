@@ -222,8 +222,6 @@ services:
       - kafka_network
     depends_on:
       - ai-inference
-    volumes:
-      - ./models:/app/models
     
 
 
